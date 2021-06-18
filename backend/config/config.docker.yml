@@ -1,0 +1,9 @@
+server:
+  bind_addr: ":8080"
+  log_level: ""
+store:
+  host: "postgres"
+  port: 5432
+  user: "postgres"
+  password: "postgres"
+  db_name: "URLShortener"

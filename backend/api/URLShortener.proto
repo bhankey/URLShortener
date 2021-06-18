@@ -1,0 +1,23 @@
+/*
+Create will take in a long url and generate for it short code
+
+Get will take in a short url and return the original url
+*/
+syntax = "proto3";
+
+package api;
+
+option go_package = "URLShortener/package/api";
+
+service URLShortener {
+  rpc Create(OriginalURL) returns (ShortCode);
+  rpc Get(ShortCode) returns (OriginalURL);
+}
+
+message OriginalURL {
+  string url = 1;
+}
+
+message ShortCode {
+  string ShortURLCode = 1;
+}

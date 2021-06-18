@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  url_shortener:
+    build: backend/.
+    container_name: url_shortener
+    image: url_shortener
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+  postgres:
+    container_name: postgres_container
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: URLShortener
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      TEST_DB: URLShortenerTest
+      TEST_DB_USER: ${TEST_PG_USER:-test}
+      TEST_DB_PASSWORD: ${TEST_PG_PASSWORD:-test}
+      PGDATA: /store/postgres
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/
+      - postgres:/store/postgres
+    restart: unless-stopped
+
+volumes:
+    postgres:      
