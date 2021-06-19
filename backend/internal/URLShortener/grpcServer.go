@@ -72,31 +72,31 @@ func (s *GRPCServer) ConfigureLogger() error {
 
 // Create will take a long url and generate for it short url
 func (s *GRPCServer) Create(ctx context.Context, req *api.OriginalURL) (*api.ShortCode, error) {
-	s.logger.Infof("Create: request started with url \"%s\"", req.Url)
+	s.logger.Infof("Create: request started with url `%s`", req.Url)
 	metadata.FromIncomingContext(ctx)
 	if !isURL(req.Url) {
-		s.logger.Warnf("Create: incorrect url was received: \"%s\"", req.Url)
+		s.logger.Warnf("Create: incorrect url was received: `%s`", req.Url)
 		return nil, fmt.Errorf("URL is not correct")
 	}
 	repository := s.store.URL()
 	shortURL, err := repository.Create(req.Url)
 	if err != nil {
-		s.logger.Warnf("Create: request failed with url \"%s\": \"%s\"", req.Url, err)
+		s.logger.Warnf("Create: request failed with url `%s`: `%s`", req.Url, err)
 	} else {
-		s.logger.Infof("Create: request finished: url \"%s\", short code: \"%s\"", req.Url, shortURL)
+		s.logger.Infof("Create: request finished: url `%s`, short code: `%s`", req.Url, shortURL)
 	}
 	return &api.ShortCode{ShortURLCode: shortURL}, err
 }
 
 //Get will take in a short url and return the original url
 func (s *GRPCServer) Get(ctx context.Context, req *api.ShortCode) (*api.OriginalURL, error) {
-	s.logger.Infof("Get: request with code \"%s\" started", req.ShortURLCode)
+	s.logger.Infof("Get: request with code `%s` started", req.ShortURLCode)
 	repository := s.store.URL()
 	originalURL, err := repository.Get(req.ShortURLCode)
 	if err != nil {
-		s.logger.Warnf("Get: request failed with short code \"%s\": \"%s\"", req.ShortURLCode, err)
+		s.logger.Warnf("Get: request failed with short code `%s`: `%s`", req.ShortURLCode, err)
 	} else {
-		s.logger.Infof("Get: request finish: short code \"%s\", url: \"%s\"", req.ShortURLCode, originalURL)
+		s.logger.Infof("Get: request finish: short code `%s`, url: `%s`", req.ShortURLCode, originalURL)
 	}
 	return &api.OriginalURL{Url: originalURL}, err
 }

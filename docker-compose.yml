@@ -25,6 +25,8 @@ services:
       - ./db:/docker-entrypoint-initdb.d/
       - postgres:/store/postgres
     restart: unless-stopped
+    ports:
+      - 5432:5432 # uncomment if you need access to database on your machine e.g for a test
 
 volumes:
     postgres:      

@@ -10,12 +10,13 @@ import (
 	"time"
 )
 
-// parseConfigPath returns path of the config file
-func parseConfigPath() string {
-	var configPath string
+var (
+	configPath string
+)
+
+func init() {
 	flag.StringVar(&configPath, "config-path", "config/config.yml", "path to configuration file")
-	flag.Parse()
-	return configPath
+	rand.Seed(time.Now().UnixNano())
 }
 
 // parseConfigFile returns config struct from .yaml file
@@ -31,11 +32,11 @@ func parseConfigFile(configPath string) *URLShortener.Config {
 	return c
 }
 
-// main start server
+// main configure and start URLShortener server
 func main() {
-	configPath := parseConfigPath()
+	flag.Parse()
 	config := parseConfigFile(configPath)
-	rand.Seed(time.Now().UnixNano())
+
 	srv := URLShortener.NewGRPCServer(config)
 	if err := srv.Start(); err != nil {
 		log.Fatal(err)
