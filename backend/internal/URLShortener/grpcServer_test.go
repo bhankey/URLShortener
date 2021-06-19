@@ -11,8 +11,9 @@ import (
 	"time"
 )
 
+// bindAddr - address of testing gRPC server
 const (
-	bindAddr = ":8080"
+	bindAddr = ":8081"
 )
 
 func TestMain(m *testing.M) {
@@ -56,7 +57,12 @@ func TestGRPCServer_CreateGet(t *testing.T) {
 	if err != nil {
 		t.Fatal("can not connect to gRPC server:", err)
 	}
-	defer conn.Close()
+	defer func(conn *grpc.ClientConn) {
+		err := conn.Close()
+		if err != nil {
+			t.Fatal("Failed to close connection to gRPC server")
+		}
+	}(conn)
 	c := api.NewURLShortenerClient(conn)
 	urlmap := make(map[string]string, 0)
 	for _, test := range tests {

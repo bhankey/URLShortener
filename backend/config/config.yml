@@ -1,5 +1,5 @@
 server:
-  bind_addr: ":8080"
+  bind_addr: ":8081"
   log_level: "info"
 store:
   host: "localhost"

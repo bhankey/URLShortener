@@ -1,6 +1,6 @@
 server:
   bind_addr: ":8080"
-  log_level: ""
+  log_level: "info"
 store:
   host: "postgres"
   port: 5432
