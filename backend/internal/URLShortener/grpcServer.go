@@ -9,6 +9,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"net"
+	"os"
+	"os/signal"
+	"sync"
 )
 
 type GRPCServer struct {
@@ -36,6 +39,21 @@ func (s *GRPCServer) Start() error {
 	srv := grpc.NewServer()
 	api.RegisterURLShortenerServer(srv, s)
 
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+
+	// goroutine monitoring for signals. if SIGINT received server will shutdown
+	go func() {
+		defer wg.Done()
+		stop := make(chan os.Signal)
+		signal.Notify(stop, os.Interrupt)
+		<-stop
+		s.logger.Info("received interrupt signal, starting graceful shutdown")
+		srv.GracefulStop()
+		s.store.Close()
+		s.logger.Info("server successfully close all connections")
+	}()
+
 	l, err := net.Listen("tcp", s.config.Server.BindAddr)
 	if err != nil {
 		return fmt.Errorf("could not listen by port %v, because of %v", s.config.Server.BindAddr, err)
@@ -44,6 +62,7 @@ func (s *GRPCServer) Start() error {
 	if err := srv.Serve(l); err != nil {
 		return fmt.Errorf("could not start gRPC server because of %v", err)
 	}
+	wg.Wait()
 	return nil
 }
 
